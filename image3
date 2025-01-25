@@ -1,0 +1,1168 @@
+#include<cstdio>
+#include <GL/gl.h>
+#include <windows.h>
+#include <GL/glut.h>
+#define PI           3.14159265358979323846
+
+#include<math.h>>
+
+GLfloat position = -1.0f;
+GLfloat speed = 0.3f;
+
+GLfloat position2 = -1.0f;
+GLfloat speed2 = 0.45f;
+
+GLfloat position3 = -35.0f;
+GLfloat speed3 = 0.5f;
+
+GLfloat position4=0.0f;
+GLfloat speed4 = 0.1f;
+
+GLfloat position5=-20.0f;
+GLfloat speed5 = 0.2f;
+
+void update(int value)
+{
+    if(position >45.0f)
+        position =- 55.0f;
+    position += speed;
+
+	glutPostRedisplay();
+	glutTimerFunc(100, update, 0);
+}
+void update2(int value){
+    if(position2 >65.0f)
+        position2 =- 40.0f;
+    position2 += speed2;
+
+	glutPostRedisplay();
+	glutTimerFunc(500, update2, 0);
+}
+//cloud update
+void update3(int value){
+    if(position3 >55.0f)
+        position3 = -55.0f;
+    position3 += speed3;
+
+	glutPostRedisplay();
+	glutTimerFunc(100, update3, 0);
+}
+
+void update4(int value){
+    if(position4 >5.0f)
+        position4 = 3.0f;
+    position4 -= speed4;
+
+	glutPostRedisplay();
+	glutTimerFunc(500, update4, 0);
+}
+
+void update5(int value)
+{
+    if(position5 <-60.0f)
+        position5 = 65.0f;
+    position5 -= speed5;
+
+	glutPostRedisplay();
+	glutTimerFunc(100, update5, 0);
+}
+
+void upper_sundevider(){
+
+    glLineWidth(2);
+    glVertex2f(-35.0f, 5.0f);
+    glVertex2f(35.0f, 5.0f);
+
+    glEnd();
+}
+
+void upper_scenariodevider(){
+    glBegin(GL_POLYGON);
+    glColor3ub(250 ,128, 114);
+
+
+    glVertex2f(-35.0f, 5.0f);
+      //glColor3ub (245 ,222, 179);
+    glVertex2f(-35.0f, 35.0f);
+
+     glColor3ub (255 ,160, 122);
+    glVertex2f(35.0f, 35.0f);
+    glColor3ub (245 ,222, 179);
+    glVertex2f(35.0f, 5.0f);
+
+    glEnd();
+
+}
+
+  void lower_scenario(){
+
+    //Lower Scenario fixer
+    glBegin(GL_POLYGON);
+    glColor3ub(255, 165 ,79);
+
+    glVertex2f(-35.0f, 5.0f);
+       glColor3ub(238 ,197, 145);
+    glVertex2f(-35.0f, -35.0f);
+    glColor3ub(150 ,205 ,205);
+    glVertex2f(35.0f, -35.0f);
+    glVertex2f(35.0f, 5.0f);
+    glEnd();
+
+}
+    /*void lower_scenario1(){
+
+    //Lower Scenario fixer
+    glBegin(GL_POLYGON);
+    glColor3ub(210 ,165 ,79);
+
+    glVertex2f(-35.0f, -15.0f);
+    //glColor3ub(152 ,245 ,255);
+    glVertex2f(-35.0f, -35.0f);
+    glColor3ub(150 ,205 ,205);
+    glVertex2f(35.0f, -35.0f);
+    glVertex2f(35.0f, -15.0f);
+    glEnd();
+
+} */
+
+
+void Sunlight_middle(){
+
+
+   glBegin(GL_POLYGON);
+
+    glColor3ub(245, 245, 220);
+    glVertex2f(-0.5f, 5.0f);
+    glColor3ub(255 ,255, 224);
+    glVertex2f(0.350f, 31.0f);
+     glColor3ub(255 ,255, 224);
+    glVertex2f(0.5f, 5.0f);
+
+    glEnd();
+
+
+}
+   void Sunlight_middle1(){
+
+    glBegin(GL_POLYGON);
+    glColor3ub(245, 245, 220);
+    glVertex2f(1.0, 5.0f);
+     glColor3ub(255 ,255, 224);
+    glVertex2f(11.0f, 23.0f);
+     glColor3ub(255 ,255, 224);
+    glVertex2f(1.8f, 5.0f);
+
+
+glEnd();
+   }
+
+   void Sunlight_middle2(){
+
+     glBegin(GL_POLYGON);
+       glColor3ub(245, 245, 220);
+    glVertex2f(-1.0f, 5.0f);
+     glColor3ub(255 ,255, 224);
+    glVertex2f(-11.0f, 23.0f);
+        glColor3ub(255 ,255, 224);
+    glVertex2f(-1.8f, 5.0f);
+
+glEnd();
+
+
+}
+
+     void Sunlight_middle3(){
+
+    glBegin(GL_POLYGON);
+    glColor3ub(245, 245, 220);
+    glVertex2f(-2.0f, 5.0f);
+    glColor3ub(255 ,255, 224);
+    glVertex2f(-27.5f, 14.8f);
+    glColor3ub(255 ,255, 224);
+    glVertex2f(-4.2f, 5.0f);
+    glEnd();
+
+     }
+
+
+    void Sunlight_middle4(){
+
+    glBegin(GL_POLYGON);
+
+    glColor3ub(245, 245, 220);
+    glVertex2f(2.0f, 5.0f);
+    glVertex2f(27.5f, 14.5f);
+     glColor3ub(255 ,255, 224);
+    glVertex2f(4.2f, 5.0f);
+    glEnd();
+    }
+
+    void sun(){
+    GLfloat x = 0.0f;
+    GLfloat y = 5.0f;
+    GLfloat radius = 5.0f;
+    int i;
+    int lineAmount = 1000;
+    GLfloat pi = 3.14159265358979323846f;
+
+     glColor3ub(250 ,235 ,215);
+    // glColor3ub(255, 218 ,185);
+
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(x, y);
+
+    for (i = 0; i <= lineAmount; i++) {
+        GLfloat angle = i * pi / lineAmount;
+        glVertex2f(
+            x + (radius * cos(angle)),
+            y + (radius * sin(angle))
+        );
+    }
+    glEnd();
+    }
+
+    void Pahar1(){
+
+    glBegin(GL_POLYGON);
+    glColor3ub(139 ,90 ,43);
+
+
+    /*glVertex2f(-35.0f, 5.0f);
+    glVertex2f(-35.0f, 15.0f);
+    glColor3ub(139 ,90 ,43);
+    glVertex2f(-32.0f, 18.0f);
+    glColor3ub(139 ,90 ,43);
+    glVertex2f(-23.0f, 5.0f); */
+
+
+    glColor3ub(79 ,79 ,79);
+    glVertex2f(-35.0f, 5.0f);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(-35.0f, 15.0f);
+    glVertex2f(-32.0f, 18.0f);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(-23.0f, 5.0f);
+
+    //2nd pahar
+      glColor3ub(139 ,90 ,43);
+    glVertex2f(-21.0f, 5.0f);
+
+    glVertex2f(-20.0f, 12.0f);
+
+    // glColor3ub(255, 165 ,79);
+    glVertex2f(-15.0f, 5.0f);
+
+
+   //3rd pahar
+
+    // glColor3ub(139 ,90 ,43);
+    glColor3ub(255, 165 ,79);
+    glVertex2f(-8.0f, 5.0f);
+    glColor3ub(139 ,90 ,43);
+    glVertex2f(-12.5f, 9.0f);
+    glVertex2f(-9.0f, 5.0f);
+
+    glEnd();
+
+    //pahar on right side
+
+    glBegin(GL_POLYGON);
+      glColor3ub(139 ,90 ,43);
+    glVertex2f(26.0f, 5.0f);
+    glVertex2f(20.0f, 12.0f);
+    glColor3ub(255, 165 ,79);
+    glVertex2f(15.0f, 5.0f);
+
+
+    glColor3ub(255, 165 ,79);
+    glVertex2f(15.0f, 5.0f);
+
+    glVertex2f(13.5f, 9.0f);
+    glVertex2f(9.0f, 5.0f);
+
+     glColor3ub(79 ,79 ,79);
+    glVertex2f(35.0f, 5.0f);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(35.0f, 15.0f);
+    glVertex2f(32.0f, 18.0f);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(23.0f, 5.0f);
+
+    glEnd();
+
+
+    }
+
+
+    void lowerside_pahar(){
+
+    glBegin(GL_POLYGON);
+
+
+       glColor3ub(79 ,79 ,79);
+    glVertex2f(-35.0f, -35.0f);
+    glVertex2f(-35.0f, -30.0f);
+     //glColor3ub(255, 165 ,79);
+    glVertex2f(-31.5f, -33.0f);
+    glVertex2f(-31.50f, -29.0f);
+    // glColor3ub(255, 165 ,79);
+    glVertex2f(-27.50f, -25.0f);
+    glVertex2f(-25.50f, -27.0f);
+    glVertex2f(-25.0f, -28.0f);
+    // glColor3ub(255, 165 ,79);
+    glVertex2f(-21.50f, -29.0f);
+    glVertex2f(-21.80f, -29.5f);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(-19.50f, -29.5f);
+    glVertex2f(-17.50f, -26.0f);
+      glColor3ub(79 ,79 ,79);
+     glColor3ub(139 ,90 ,43);
+    glVertex2f(-15.50f, -24.0f);
+    glVertex2f(-12.50f, -24.50f);
+      glColor3ub(79 ,79 ,79);
+    glVertex2f(-12.50f, -28.0f);
+     glColor3ub(139 ,90 ,43);
+       glColor3ub(79 ,79 ,79);
+    glVertex2f(-8.50f, -32.0f);
+     //glColor3ub(139 ,90 ,43);
+       glColor3ub(79 ,79 ,79);
+    glVertex2f(-1.50f, -34.0f);
+     // glColor3ub(255, 165 ,79);
+    glVertex2f(1.50f, -35.0f);
+
+    glEnd();
+
+
+    }
+
+    void first_boat(){
+        glPushMatrix();
+    glTranslatef(position,0.0f, 0.0f);
+    glBegin(GL_POLYGON);
+     glColor3ub(139, 54 ,38);
+     glVertex2f(9.50f, -29.0f);
+     glVertex2f(5.50f, -25.0f);
+     //glColor3ub(80 ,80 ,80);
+     glVertex2f(26.50f, -25.0f);
+     glVertex2f(22.50f, -29.0f);
+     glEnd();
+    //boat house
+    glBegin(GL_POLYGON);
+    glColor3ub(139, 69, 19);
+    glVertex2f(14.50f, -25.0f);
+    glColor3ub(139, 26 ,26);
+    glVertex2f(10.50f, -25.0f);
+    glVertex2f(11.50f, -20.0f);
+    glColor3ub(205, 91, 69);
+    glVertex2f(21.50f, -20.0f);
+    glVertex2f(22.50f, -25.0f);
+    glEnd();
+
+
+     glBegin(GL_POLYGON);
+
+    //1st nouka  boitha
+     glColor3ub(255, 165 ,79);
+     glVertex2f(6.50f, -32.0f);
+     glVertex2f(11.70, -18.0f);
+     glColor3ub(139, 69 ,19);
+     glVertex2f(12.30f, -18.0f);
+     glVertex2f(6.0f, -32.0f);
+     glEnd();
+
+      //1st nouka noukar dheu
+     glBegin(GL_POLYGON);
+      glColor3ub(255, 165 ,79);
+
+     glVertex2f(5.50f, -32.0f);
+     glVertex2f(8.00f, -29.0f);
+     //glColor3ub(58, 95 ,205);
+      //glColor3ub(255, 165 ,79);
+      glColor3ub(150 ,205 ,205);
+     glVertex2f(22.50f, -29.0f);
+      glColor3ub(150 ,205 ,205);
+     glVertex2f(25.50f, -32.0f);
+     glEnd();
+     glPopMatrix();
+
+    }
+
+    void seond_boat(){
+    glPushMatrix();
+    glTranslatef(position2,0.0f, 0.0f);
+float middleX = -20;
+
+// Draw the middle line
+
+// Draw the first triangle with one point at the middle line
+    glBegin(GL_TRIANGLES);
+    glColor3ub(232, 12, 12); // Black color for the triangle
+    glVertex2f(-20, -2.0f); // Top vertex at the middle line
+    glVertex2f(-26, -10.5f); // Bottom left vertex
+    glVertex2f(-20, -10.5f); // Bottom right vertex
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glColor3ub(232, 12, 12);
+    glVertex2f(-20, -2.0f); // Top vertex at the middle line
+    glVertex2f(-14, -10.5f); // Bottom left vertex
+    glVertex2f(-19, -10.5f); // Bottom right vertex
+    glEnd();
+
+// Draw the middle line
+glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 0.0f); // White color for the line
+    glVertex2f(middleX, -1.5f); // Starting point of the line
+    glVertex2f(middleX, -12.0f); // Ending point of the line
+glEnd();
+    //2nd part middle
+    glBegin(GL_POLYGON);
+    glColor3ub(150, 64, 21);
+     glVertex2f(-13.50f, -15.0f);
+     glVertex2f(-9.50f, -11.0f);
+     //glColor3ub(80 ,80 ,80);
+     glVertex2f(-30.50f, -11.0f);
+     glVertex2f(-26.50f, -15.0f);
+     glEnd();
+
+    // glVertex2f();
+    //boat house
+  /*  glBegin(GL_POLYGON);
+    glColor3ub(139, 69, 19);
+    glVertex2f(-18.50f, -11.0f);
+    glColor3ub(139, 26 ,26);
+    glVertex2f(-14.50f, -11.0f);
+    glVertex2f(-15.50f, -6.0f);
+    glColor3ub(205, 91, 69);
+    glVertex2f(-25.50f, -6.0f);
+    glVertex2f(-26.50f, -11.0f);
+    glEnd();*/
+//2nd nouka  boitha
+/*
+    glBegin(GL_POLYGON);
+
+    glColor3ub(255 ,211 ,155);
+
+    glVertex2f(-31.50f, -19.0f);
+
+    glColor3ub(139, 26 ,26);
+
+    glVertex2f(-26.50f, -5.0f);
+
+    glVertex2f(-25.80f, -5.0f);
+
+    glColor3ub(238 ,154 ,73);
+
+    glVertex2f(-30.80f, -19.0f);
+
+    glEnd();
+*/
+      //2nd nouka //noukar dheu
+
+    glBegin(GL_POLYGON);
+
+     glColor3ub(255, 218 ,185);
+
+    glVertex2f(-11.50f, -18.0f);
+
+    glVertex2f(-13.50f, -15.0f);
+
+    glColor3ub(255, 165 ,79);
+
+    glVertex2f(-26.50f, -15.0f);
+
+    glVertex2f(-29.50f, -18.0f);
+
+    glEnd();
+
+    glPopMatrix();
+
+    }
+
+
+
+    void drawcloud1(GLfloat x, GLfloat y, GLfloat radius) {
+   glPushMatrix();
+  // glTranslatef(position3,0.0f, 0.0f);
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+   glPopMatrix();
+   glEnd();
+
+}
+
+       void drawcloud11(GLfloat x, GLfloat y, GLfloat radius) {
+   glPushMatrix();
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+   glPopMatrix();
+       }
+
+          void drawcloud12(GLfloat x, GLfloat y, GLfloat radius) {
+
+   glPushMatrix();
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+   glPopMatrix();
+   }
+
+          void drawcloud13(GLfloat x, GLfloat y, GLfloat radius) {
+   glPushMatrix();
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+   glPopMatrix();
+
+          }
+
+void drawcloud2(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud3(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud4(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud5(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud6(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud7(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud8(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+void drawcloud9(GLfloat x, GLfloat y, GLfloat radius) {
+
+   int triangleAmount = 100; // Number of triangles used to approximate the circle
+
+   GLfloat twicePi = 2.0f * PI;
+
+   glColor3ub (245, 245, 245); // Set color for the sun (Yello)
+
+   glBegin(GL_TRIANGLE_FAN);
+
+       glVertex2f(x, y); // Center of circle
+
+       for (int i = 0; i <= triangleAmount; i++) {
+
+           glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+
+                      y + (radius * sin(i * twicePi / triangleAmount)));
+
+       }
+
+   glEnd();
+
+}
+
+//pahar shadow
+
+     void Pahar12(){
+
+    glBegin(GL_POLYGON);
+
+    //glColor3ub(30, 144,255);
+
+   glColor3ub(255, 165, 79);
+
+    glVertex2f(-35.0f, -1.0f);
+
+    glVertex2f(-35.0f, 5.0f);
+
+      //glColor3ub(30, 144 ,255);
+
+    glVertex2f(-7.0f, 5.0f);
+
+    glColor3ub(205, 102, 29);
+
+    glVertex2f(-14.0f, 3.0f);
+
+    glVertex2f(-27.0f, -0.8f);
+
+    glEnd();
+
+     }
+
+
+     void Pahar12opossite(){
+
+    glBegin(GL_POLYGON);
+
+  glColor3ub(255, 165, 79);
+
+      glVertex2f(35.0f, -1.0f);
+
+    //glColor3ub(0 ,191, 255);
+
+    glVertex2f(35.0f, 5.0f);
+
+    //  glColor3ub(30, 144 ,255);
+
+    glVertex2f(7.0f, 5.0f);
+
+    glColor3ub(205, 102, 29);
+
+    glVertex2f(14.0f, 3.0f);
+
+    glVertex2f(27.0f, -0.8f);
+
+glEnd();
+
+     }
+
+  void rivershadow(){
+
+      glBegin(GL_POLYGON);
+
+       //glColor3ub( 0 ,191 ,255);
+
+      // glColor3ub(30, 144 ,255);
+
+      glColor3ub(255 ,222, 173);
+
+     glVertex2f(-3.0f, 3.0f);
+
+    // glColor3ub(255, 218 ,185);
+
+      glVertex2f(-7.0f, 5.0f);
+
+     //  glColor3ub( 151 ,255, 255);
+
+      // glColor3ub( 0 ,191 ,255);
+
+       glVertex2f(7.0f, 5.0f);
+
+      //glColor3ub( 151 ,255, 255);
+
+       // glColor3ub( 0 ,191 ,255);
+
+       // glColor3ub(30, 144, 255);
+
+        glVertex2f(3.5f, 3.0f);
+
+       // glColor3ub( 151 ,255, 255);
+
+          //glColor3ub( 151 ,255, 255);
+
+           //glColor3ub(150 ,205 ,205);
+
+       // glColor3ub( 0 ,191 ,255);
+
+     glEnd();    //glColor3ub(255, 218 ,185);
+
+  }
+
+   /*void rivershadow12(){
+
+      glBegin(GL_POLYGON);
+
+       glColor3ub( 0 ,191 ,255);
+
+       //glColor3ub(30, 144 ,255);
+
+     glVertex2f(7.0f, -9.0f);
+
+    // glColor3ub(255, 218 ,185);
+
+      glVertex2f(12.0f, -7.0f);
+
+       glColor3ub( 0 ,191 ,255);
+
+       glVertex2f(25.0f, -7.0f);
+
+        glColor3ub( 0 ,191 ,255);
+
+        glColor3ub( 0 ,191 ,255);
+
+      //  glColor3ub(30, 144, 255);
+
+        glVertex2f(18.0f, -9.0f);
+
+        glColor3ub( 0 ,191 ,255);
+
+        //glColor3ub(255, 218 ,185);
+
+
+
+
+    glEnd();
+
+     } */
+
+void Bird(){
+    glPushMatrix();
+   glBegin(GL_LINES);
+   glColor3b(0,0,0);
+   //first bird
+   glVertex2f(30,19);
+   glVertex2f(31,19.5);
+   glVertex2f(31,19.5);
+   glVertex2f(32,19);
+   glVertex2f(32,19);
+   glVertex2f(33,19.5);
+   glVertex2f(33,19.5);
+   glVertex2f(34,19);
+
+   //2nd bird
+   glVertex2f(30.3,20);
+   glVertex2f(31.3,20.5);
+   glVertex2f(31.3,20.5);
+   glVertex2f(32.3,20);
+   glVertex2f(32.3,20);
+   glVertex2f(33.3,20.5);
+   glVertex2f(33.3,20.5);
+   glVertex2f(34.3,20);
+
+   //3rd bird
+   glVertex2f(25.3,20);
+   glVertex2f(26.3,20.5);
+   glVertex2f(26.3,20.5);
+   glVertex2f(27.3,20);
+   glVertex2f(27.3,20);
+  glVertex2f(28.3,20.5);
+  glVertex2f(28.3,20.5);
+  glVertex2f(29.3,20);
+
+  //4th bird
+  glVertex2f(25.3,19);
+   glVertex2f(26.3,19.5);
+   glVertex2f(26.3,19.5);
+   glVertex2f(27.3,19);
+   glVertex2f(27.3,19);
+  glVertex2f(28.3,19.5);
+  glVertex2f(28.3,19.5);
+  glVertex2f(29.3,19);
+
+
+
+
+
+   glEnd();
+   glPopMatrix();
+}
+
+void SpecialInput(int key, int x, int y)
+{
+switch(key)
+{
+case GLUT_KEY_UP:
+speed += 0.5f;
+break;
+case GLUT_KEY_DOWN:
+speed -= 0.5f;
+break;
+case GLUT_KEY_LEFT:
+    speed2+=0.5f;
+break;
+case GLUT_KEY_RIGHT:
+break;
+}
+glutPostRedisplay();
+}
+
+void handleKeypress(unsigned char key, int x, int y)
+{
+	switch (key)
+    {
+    case 'w':
+       speed+=0.5f;
+        break;
+    case 'a':
+      speed-=0.5f;
+        break;
+        //boat2
+    case 'c':
+        speed2+=0.5f;
+        break;
+    case 'd':
+        speed2-=0.5f;
+        break;
+    case 'e':
+        speed3+=0.5f;
+        break;
+    case 'f':
+        speed3-=0.5f;
+        break;
+    case 's':
+        speed4=0.0f;
+        break;
+    glutPostRedisplay();
+
+	}
+}
+
+void handleMouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		speed5+=0.01F;
+	}
+	if (button == GLUT_RIGHT_BUTTON)
+	{
+
+      speed5=0.0f;
+
+	}
+	glutPostRedisplay();
+}
+
+
+void display() {
+
+    glClearColor(0.941f, 0.902f, 0.549f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    upper_sundevider();
+
+    upper_scenariodevider();
+     glPushMatrix();
+    glTranslatef(0.0f,position4, 0.0f);
+    Sunlight_middle();
+
+    Sunlight_middle1();
+
+    Sunlight_middle2();
+
+    Sunlight_middle3();
+
+    Sunlight_middle4();
+
+    sun();
+    glPopMatrix();
+
+    lower_scenario();
+
+//   lower_scenario1();
+
+    Pahar1();
+
+ //   lowerside_pahar();
+
+    first_boat();
+    lowerside_pahar();
+
+    seond_boat();
+
+    glPushMatrix();
+ // glTranslatef(position4,0.0f, 0.0f);
+   drawcloud11(26.6, 29.5, 2.4);
+
+   drawcloud12(30.0, 30.0, 2.6);
+
+   drawcloud13(33.0, 29.0, 2.4);
+   glPopMatrix();
+   //most lest cloud
+   glPushMatrix();
+ //  glTranslatef(position4,0.0f, 0.0f);
+   drawcloud1(-22.6, 29.5, 2.3);
+
+   drawcloud2(-26.0, 30.0, 2.5);
+
+   drawcloud3(-29.0, 29.0, 2.3);
+   glPopMatrix();
+   //most right cloud
+
+   //right left down  cloud
+   glPushMatrix();
+   glTranslatef(position3,0.0f, 0.0f);
+   drawcloud4(16.0, 16.88, 1.7);
+
+   drawcloud5(19.0, 17.0, 2.3);
+
+   drawcloud6(22.0, 17.2, 1.7);
+   glPopMatrix();
+  // drawcloudBase2();
+
+   glPushMatrix();
+    glTranslatef(position3,0.0f, 0.0f);
+   drawcloud7(-8.0, 18.88, 1.7);
+
+   drawcloud8(-11.0, 19.0, 2.3);
+
+   drawcloud9(-14.0, 19.2, 1.7);
+   glPopMatrix();
+   //drawcloudBase3();
+
+   Pahar12();
+
+   Pahar12opossite();
+
+   rivershadow();
+   glPushMatrix();
+    glTranslatef(position5,0.0f, 0.0f);
+   Bird();
+   glPopMatrix();
+   //rivershadow12();
+
+
+    glFlush();
+
+}
+void sound()
+{
+
+    //PlaySound("a.wav", NULL, SND_ASYNC|SND_FILENAME);
+    PlaySound("pics3", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
+
+}
+
+void init() {
+
+    glMatrixMode(GL_PROJECTION);
+
+    glLoadIdentity();
+
+    gluOrtho2D(-35.0, 35.0, -35.0, 35.0);
+
+    glMatrixMode(GL_MODELVIEW);
+
+}
+
+int main(int argc, char** argv) {
+
+    glutInit(&argc, argv);                 // Initialize GLUT
+
+    glutInitWindowSize(700, 700);          // Set the window's initial width & height
+
+    glutInitWindowPosition(80, 50);        // Set the window's initial position according to the monitor
+
+    glutCreateWindow("Sunset"); // Create a window with the given title
+
+    init();                                // Call the initialization function
+
+    glutDisplayFunc(display);
+    glutKeyboardFunc(handleKeypress);
+    glutSpecialFunc(SpecialInput);             // Register display callback handler for window re-paint
+    glutMouseFunc(handleMouse);
+    glutTimerFunc(100, update, 0);
+    glutTimerFunc(100, update2, 0);
+    glutTimerFunc(100, update3, 0);
+    //glutTimerFunc(100, update4, 0);
+    glutTimerFunc(100, update5, 0);
+
+
+    sound();
+    glutMainLoop();                        // Enter the event-processing loop
+
+    return 0;
+
+}
+
