@@ -1,0 +1,1073 @@
+#include<cstdio>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <windows.h>  // For MS Windows
+#include <math.h>     // Math functions
+#define PI 3.14159265358979323846
+//Draw Sun
+void drawSun(GLfloat x, GLfloat y, GLfloat radius) {
+    int triangleAmount = 100; // Number of triangles used to approximate the circle
+    GLfloat twicePi = 2.0f * PI;
+    glColor3ub(255, 255, 0); // Set color for the Sun (Yellow)
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x, y); // Center of circle
+        for (int i = 0; i <= triangleAmount; i++) {
+            glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+                       y + (radius * sin(i * twicePi / triangleAmount)));
+        }
+    glEnd();
+}
+// Metro movement variables
+GLfloat metroPosition = 0.0f;  // Initial position of the metro rail
+GLfloat metroSpeed = 0.18f;  // Speed of the metro rail
+bool isMoving = true;  // Control variable for starting/stopping
+
+// Track and vehicle movement variables
+float trackPosition = 0.0f;  // Position of the track to create movement
+float tireAngle = 0.0f;  // Angle for tire rotation
+float trackSpeed = 0.15f;  // Speed of track movement
+const float tireRotationSpeed = 2.0f;  // Speed of tire rotation
+GLfloat carPosition = 0.0f;
+GLfloat microbusPosition = 80.0f; // Start from the right side
+GLfloat carSpeed = 0.2f;
+GLfloat microbusSpeed = 0.2f;
+GLfloat carTireAngle = 0.0f;
+GLfloat microbusTireAngle = 0.0f;
+
+// Metro
+void drawMetroBoady() {
+    glColor3ub(205, 51, 51);
+    glBegin(GL_QUADS);
+        glVertex2f(5.0 + metroPosition, 27.0);
+        glVertex2f(5.0 + metroPosition, 30.0);
+        glVertex2f(25.0 + metroPosition, 30.0);
+        glVertex2f(25.0 + metroPosition, 27.0);
+    glEnd();
+
+    // Draw the metro windows
+    glColor3ub(232, 232, 232); // Set color to white for windows
+
+    // Window 1
+    glBegin(GL_QUADS);
+        glVertex2f(6.0 + metroPosition, 28.0);
+        glVertex2f(6.0 + metroPosition, 29.0);
+        glVertex2f(8.0 + metroPosition, 29.0);
+        glVertex2f(8.0 + metroPosition, 28.0);
+    glEnd();
+
+    // Window 2
+    glBegin(GL_QUADS);
+        glVertex2f(9.0 + metroPosition, 28.0);
+        glVertex2f(9.0 + metroPosition, 29.0);
+        glVertex2f(11.0 + metroPosition, 29.0);
+        glVertex2f(11.0 + metroPosition, 28.0);
+    glEnd();
+
+    // Window 3
+    glBegin(GL_QUADS);
+        glVertex2f(12.0 + metroPosition, 28.0);
+        glVertex2f(12.0 + metroPosition, 29.0);
+        glVertex2f(14.0 + metroPosition, 29.0);
+        glVertex2f(14.0 + metroPosition, 28.0);
+    glEnd();
+
+    // Window 4
+    glBegin(GL_QUADS);
+        glVertex2f(15.0 + metroPosition, 28.0);
+        glVertex2f(15.0 + metroPosition, 29.0);
+        glVertex2f(17.0 + metroPosition, 29.0);
+        glVertex2f(17.0 + metroPosition, 28.0);
+    glEnd();
+
+    // Window 5
+    glBegin(GL_QUADS);
+        glVertex2f(18.0 + metroPosition, 28.0);
+        glVertex2f(18.0 + metroPosition, 29.0);
+        glVertex2f(20.0 + metroPosition, 29.0);
+        glVertex2f(20.0 + metroPosition, 28.0);
+    glEnd();
+
+    // Window 6
+    glBegin(GL_QUADS);
+        glVertex2f(22.0 + metroPosition, 28.0);
+        glVertex2f(22.0 + metroPosition, 29.0);
+        glVertex2f(24.0 + metroPosition, 29.0);
+        glVertex2f(24.0 + metroPosition, 28.0);
+    glEnd();
+}
+
+// Function to update the metro position
+void updateMetro(int value) {
+    if (isMoving) {
+        metroPosition += metroSpeed;  // Move the metro rail to the right
+        if (metroPosition > 80.0f) {
+            metroPosition = -50.0f;  // Reset position if it goes off-screen
+        }
+        glutPostRedisplay();  // Redraw the scene
+    }
+    glutTimerFunc(16, updateMetro, 0);  // Call update function again after 16 milliseconds
+}
+
+// Function to update the scene for animation
+void customUpdateFunction(int value) {
+    if (isMoving) {
+        // Move the track and the bus
+        trackPosition += trackSpeed;
+        carPosition -= carSpeed;
+        microbusPosition -= microbusSpeed;
+        tireAngle += tireRotationSpeed;  // Rotate the tires
+
+        // Reset positions when they move off-screen
+        if (trackPosition >= 80.0f) {
+            trackPosition = -80.0f;
+        }
+        if (carPosition < -80.0f) carPosition = 80.0f;
+        if (microbusPosition < -80.0f) microbusPosition = 80.0f;
+
+        // Redisplay the scene
+        glutPostRedisplay();
+    }
+    glutTimerFunc(16, customUpdateFunction, 0);  // Call customUpdateFunction again after 16ms
+}
+
+// Function to draw a circle (for tires)
+void drawRotatingCircle(GLfloat x, GLfloat y, GLfloat radius, GLfloat angle, GLubyte r, GLubyte g, GLubyte b) {
+    int triangleAmount = 100;
+    GLfloat twicePi = 2.0f * PI;
+
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glRotatef(angle, 0.0f, 0.0f, 1.0f);
+    glTranslatef(-x, -y, 0.0f);
+
+    glColor3ub(r, g, b);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(x, y);
+    for (int i = 0; i <= triangleAmount; i++) {
+        glVertex2f(
+            x + (radius * cos(i * twicePi / triangleAmount)),
+            y + (radius * sin(i * twicePi / triangleAmount))
+        );
+    }
+    glEnd();
+
+    glPopMatrix();
+}
+// Function to draw the Road
+void drawRoad() {
+   glColor3ub(119, 136, 153); // Road color
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 0.0);
+       glVertex2f(80.0, 0.0);
+       glVertex2f(80.0, 15.0);
+       glVertex2f(0.0, 15.0);
+   glEnd();
+}
+
+void drawSideLine1() {
+   glColor3ub(255, 255, 255); // Side line color 1
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 2.0);
+       glVertex2f(80.0, 2.0);
+       glVertex2f(80.0, 3.0);
+       glVertex2f(0.0, 3.0);
+   glEnd();
+}
+
+void drawSideLine2() {
+   glColor3ub(255, 255, 255); // Side line color 2
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 14.0);
+       glVertex2f(80.0, 14.0);
+       glVertex2f(80.0, 13.0);
+       glVertex2f(0.0, 13.0);
+   glEnd();
+}
+
+void drawMiddleLine1() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(5.0, 8.0);
+       glVertex2f(10.0, 8.0);
+       glVertex2f(10.2, 9.2);
+       glVertex2f(5.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine2() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(15.0, 8.0);
+       glVertex2f(20.0, 8.0);
+       glVertex2f(20.2, 9.2);
+       glVertex2f(15.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine3() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(25.0, 8.0);
+       glVertex2f(30.0, 8.0);
+       glVertex2f(30.2, 9.2);
+       glVertex2f(25.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine4() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(35.0, 8.0);
+       glVertex2f(40.0, 8.0);
+       glVertex2f(40.2, 9.2);
+       glVertex2f(35.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine5() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(45.0, 8.0);
+       glVertex2f(50.0, 8.0);
+       glVertex2f(50.2, 9.2);
+       glVertex2f(45.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine6() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(55.0, 8.0);
+       glVertex2f(60.0, 8.0);
+       glVertex2f(60.2, 9.2);
+       glVertex2f(55.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine7() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(65.0, 8.0);
+       glVertex2f(70.0, 8.0);
+       glVertex2f(70.2, 9.2);
+       glVertex2f(65.2, 9.2);
+   glEnd();
+}
+
+void drawMiddleLine8() {
+   glColor3ub(255, 255, 255); // Middle line color
+   glBegin(GL_POLYGON);
+       glVertex2f(75.0, 8.0);
+       glVertex2f(80.0, 8.0);
+       glVertex2f(80.2, 9.2);
+       glVertex2f(75.2, 9.2);
+   glEnd();
+}
+void drawGreenTree() {
+   glColor3ub(34, 139, 34);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 15.0);
+       glVertex2f(80.0, 15.0);
+       glVertex2f(80.0, 17.0);
+       glVertex2f(0.0, 17.0);
+   glEnd();
+}
+void drawGreenTree2() {
+   glColor3ub(50, 205, 50);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 17.0);
+       glVertex2f(80.0, 17.0);
+       glVertex2f(80.0, 17.6);
+       glVertex2f(0.0, 17.6);
+   glEnd();
+}
+void drawPillerBase() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 19.0);
+       glVertex2f(80.0, 19.0);
+       glVertex2f(80.0, 17.6);
+       glVertex2f(0.0, 17.6);
+   glEnd();
+}
+void drawPiller1() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(8.0, 19.0);
+       glVertex2f(8.0, 25.0);
+       glVertex2f(10.0, 25.0);
+       glVertex2f(10.0, 19.0);
+   glEnd();
+}
+void drawPiller2() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(14.0, 19.0);
+       glVertex2f(14.0, 25.0);
+       glVertex2f(16.0, 25.0);
+       glVertex2f(16.0, 19.0);
+   glEnd();
+}
+void drawPiller3() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(26.0, 19.0);
+       glVertex2f(26.0, 25.0);
+       glVertex2f(28.0, 25.0);
+       glVertex2f(28.0, 19.0);
+   glEnd();
+}
+void drawPiller4() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(32.0, 19.0);
+       glVertex2f(32.0, 25.0);
+       glVertex2f(34.0, 25.0);
+       glVertex2f(34.0, 19.0);
+   glEnd();
+}
+void drawPiller5() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(44.0, 19.0);
+       glVertex2f(44.0, 25.0);
+       glVertex2f(46.0, 25.0);
+       glVertex2f(46.0, 19.0);
+   glEnd();
+}
+void drawPiller6() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(50.0, 19.0);
+       glVertex2f(50.0, 25.0);
+       glVertex2f(52.0, 25.0);
+       glVertex2f(52.0, 19.0);
+   glEnd();
+}
+void drawPiller7() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(62.0, 19.0);
+       glVertex2f(62.0, 25.0);
+       glVertex2f(64.0, 25.0);
+       glVertex2f(64.0, 19.0);
+   glEnd();
+}
+void drawPiller8() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(68.0, 19.0);
+       glVertex2f(68.0, 25.0);
+       glVertex2f(70.0, 25.0);
+       glVertex2f(70.0, 19.0);
+   glEnd();
+}
+//mini piller
+void drawMiniPiller1() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(5.5, 27.0);
+       glVertex2f(5.5, 27.5);
+       glVertex2f(6.0, 27.5);
+       glVertex2f(6.0, 27.0);
+   glEnd();
+}
+void drawMiniPiller2() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(13.0, 27.0);
+       glVertex2f(13.0, 27.5);
+       glVertex2f(13.5, 27.5);
+       glVertex2f(13.5, 27.0);
+   glEnd();
+}
+void drawMiniPiller3() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(20.5, 27.0);
+       glVertex2f(20.5, 27.5);
+       glVertex2f(21.0, 27.5);
+       glVertex2f(21.0, 27.0);
+   glEnd();
+}
+void drawMiniPiller4() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(28.0, 27.0);
+       glVertex2f(28.0, 27.5);
+       glVertex2f(28.5, 27.5);
+       glVertex2f(28.5, 27.0);
+   glEnd();
+}
+void drawMiniPiller5() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(35.5, 27.0);
+       glVertex2f(35.5, 27.5);
+       glVertex2f(36.0, 27.5);
+       glVertex2f(36.0, 27.0);
+   glEnd();
+}
+void drawMiniPiller6() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(43.0, 27.0);
+       glVertex2f(43.0, 27.5);
+       glVertex2f(43.5, 27.5);
+       glVertex2f(43.5, 27.0);
+   glEnd();
+}
+void drawMiniPiller7() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(50.5, 27.0);
+       glVertex2f(50.5, 27.5);
+       glVertex2f(51.0, 27.5);
+       glVertex2f(51.0, 27.0);
+   glEnd();
+}
+void drawMiniPiller8() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(58.0, 27.0);
+       glVertex2f(58.0, 27.5);
+       glVertex2f(58.5, 27.5);
+       glVertex2f(58.5, 27.0);
+   glEnd();
+}
+void drawMiniPiller9() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(65.5, 27.0);
+       glVertex2f(65.5, 27.5);
+       glVertex2f(66.0, 27.5);
+       glVertex2f(66.0, 27.0);
+   glEnd();
+}
+void drawMiniPiller10() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(73.0, 27.0);
+       glVertex2f(73.0, 27.5);
+       glVertex2f(73.5, 27.5);
+       glVertex2f(73.5, 27.0);
+   glEnd();
+}
+void drawBridge2() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 27.5);
+       glVertex2f(0.0, 28.0);
+       glVertex2f(80.0, 28.0);
+       glVertex2f(80.0, 27.5);
+   glEnd();
+}
+void drawBridge() {
+   glColor3ub(54, 100, 139);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 25.0);
+       glVertex2f(0.0, 27.0);
+       glVertex2f(80.0, 27.0);
+       glVertex2f(80.0, 25.0);
+   glEnd();
+}
+
+//Building
+void drawBuilding1() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(2.0, 19.0);
+       glVertex2f(2.0, 30.0);
+       glVertex2f(6.0, 30.0);
+       glVertex2f(6.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding11() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(2.0, 19.0);
+       glVertex2f(2.0, 30.0);
+       glVertex2f(4.0, 30.0);
+       glVertex2f(4.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding2() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(8.0, 19.0);
+       glVertex2f(8.0, 35.0);
+       glVertex2f(13.0, 35.0);
+       glVertex2f(13.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding22() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(8.0, 19.0);
+       glVertex2f(8.0, 35.0);
+       glVertex2f(10.0, 35.0);
+       glVertex2f(10.0, 19.0);
+
+   glEnd();
+}
+// Function to render bitmap text
+void renderBitmapString(float x, float y, void *font, const char *string) {
+    const char *c;
+    glRasterPos2f(x, y);
+    for (c = string; *c != '\0'; c++) {
+        glutBitmapCharacter(font, *c);
+    }
+}
+
+void drawBuilding3() {
+    glColor3ub(108, 166, 205);
+    glBegin(GL_POLYGON);
+        glVertex2f(15.0, 19.0);
+        glVertex2f(15.0, 33.0);
+        glVertex2f(25.0, 33.0);
+        glVertex2f(25.0, 19.0);
+    glEnd();
+
+    // Render text "SCHOOL"
+    glColor3ub(214, 214, 214); // Set text color to black
+    renderBitmapString(17.3, 31.0, GLUT_BITMAP_HELVETICA_18, "HOSPITAL");
+}
+
+void drawBuilding4() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(30.0, 19.0);
+       glVertex2f(30.0, 30.0);
+       glVertex2f(35.0, 30.0);
+       glVertex2f(35.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding44() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(30.0, 19.0);
+       glVertex2f(30.0, 30.0);
+       glVertex2f(32.0, 30.0);
+       glVertex2f(32.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding5() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(35.0, 19.0);
+       glVertex2f(35.0, 38.0);
+       glVertex2f(40.0, 38.0);
+       glVertex2f(40.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding55() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(35.0, 19.0);
+       glVertex2f(35.0, 38.0);
+       glVertex2f(37.5, 38.0);
+       glVertex2f(37.5, 19.0);
+
+   glEnd();
+}
+
+void drawBuilding6() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(42.0, 19.0);
+       glVertex2f(42.0, 34.0);
+       glVertex2f(50.0, 34.0);
+       glVertex2f(50.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding66() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(42.0, 19.0);
+       glVertex2f(42.0, 34.0);
+       glVertex2f(45.0, 34.0);
+       glVertex2f(45.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding7() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(52.0, 40.0);
+       glVertex2f(52.0, 19.0);
+       glVertex2f(62.0, 19.0);
+       glVertex2f(62.0, 40.0);
+
+   glEnd();
+}
+void drawBuilding77() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(52.0, 40.0);
+       glVertex2f(52.0, 19.0);
+       glVertex2f(55.0, 19.0);
+       glVertex2f(55.0, 40.0);
+
+   glEnd();
+}
+void drawBuilding8() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(62.0, 30.0);
+       glVertex2f(62.0, 19.0);
+       glVertex2f(66.0, 19.0);
+       glVertex2f(66.0, 30.0);
+
+   glEnd();
+}
+void drawBuilding88() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(58.0, 19.0);
+       glVertex2f(58.0, 40.0);
+       glVertex2f(60.0, 40.0);
+       glVertex2f(60.0, 19.0);
+
+   glEnd();
+}
+void drawBuilding9() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(69.0, 36.0);
+       glVertex2f(69.0, 19.0);
+       glVertex2f(76.0, 19.0);
+       glVertex2f(76.0, 36.0);
+
+   glEnd();
+}
+void drawBuilding99() {
+   glColor3ub(245, 245, 245);
+   glBegin(GL_POLYGON);
+       glVertex2f(69.0, 36.0);
+       glVertex2f(69.0, 19.0);
+       glVertex2f(72.0, 19.0);
+       glVertex2f(72.0, 36.0);
+
+   glEnd();
+}
+void drawBuilding10() {
+   glColor3ub(108, 166, 205);
+   glBegin(GL_POLYGON);
+       glVertex2f(0.0, 19.0);
+       glVertex2f(0.0, 24.0);
+       glVertex2f(80.0, 24.0);
+       glVertex2f(80.0, 19.0);
+
+   glEnd();
+}
+
+// Function to draw the track body and its parts
+void drawTrackBoady4() {
+    glColor3ub(0, 0, 0);
+    glBegin(GL_QUADS);
+        glVertex2f(5.5 + trackPosition, 11.0);
+        glVertex2f(9.5 + trackPosition, 11.0);
+        glVertex2f(9.5 + trackPosition, 10.5);
+        glVertex2f(5.5 + trackPosition, 10.5);
+    glEnd();
+}
+
+void drawTrackBoady() {
+    glColor3ub(255, 250, 240);
+    glBegin(GL_QUADS);
+        glVertex2f(5.5 + trackPosition, 10.0);
+        glVertex2f(5.0 + trackPosition, 20.0);
+        glVertex2f(25.0 + trackPosition, 20.0);
+        glVertex2f(25.0 + trackPosition, 10.0);
+    glEnd();
+}
+
+void drawTrackBoady3() {
+    glColor3ub(61, 61, 61);
+    glBegin(GL_QUADS);
+        glVertex2f(5.5 + trackPosition, 8.0);
+        glVertex2f(32.0 + trackPosition, 8.0);
+        glVertex2f(32.0 + trackPosition, 10.0);
+        glVertex2f(5.5 + trackPosition, 10.0);
+    glEnd();
+}
+
+void drawTrackBoady2() {
+    glColor3ub(126, 192, 238);
+    glBegin(GL_QUADS);
+        glVertex2f(5.5 + trackPosition, 19.5);
+        glVertex2f(24.5 + trackPosition, 19.5);
+        glVertex2f(24.5 + trackPosition, 10.5);
+        glVertex2f(6.0 + trackPosition, 10.5);
+
+        glVertex2f(26.0 + trackPosition, 18.0);
+        glVertex2f(31.0 + trackPosition, 18.0);
+        glVertex2f(32.0 + trackPosition, 9.5);
+        glVertex2f(25.5 + trackPosition, 9.5);
+
+        glVertex2f(19.0 + trackPosition, 9.0);
+        glVertex2f(25.0 + trackPosition, 9.0);
+        glVertex2f(25.0 + trackPosition, 7.0);
+        glVertex2f(20.0 + trackPosition, 7.0);
+    glEnd();
+}
+
+// Function to draw a tire (for all tire types)
+void drawTrackTire(GLfloat x, GLfloat y, GLfloat radius, GLuint color) {
+    int triangleAmount = 100;
+    GLfloat twicePi = 2.0f * PI;
+    glColor3ub(color, color, color);
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x, y);
+        for (int i = 0; i <= triangleAmount; i++) {
+            glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+                       y + (radius * sin(i * twicePi / triangleAmount)));
+        }
+    glEnd();
+}
+
+// Car drawing functions
+void drawCarBody1() {
+    glColor3ub(255, 215, 0);
+    glBegin(GL_QUADS);
+    glVertex2f(47.0 + carPosition, 14.0);
+    glVertex2f(48.5 + carPosition, 16.0);
+    glVertex2f(53.0 + carPosition, 16.0);
+    glVertex2f(55.0 + carPosition, 14.0);
+    glVertex2f(45.0 + carPosition, 13.0);
+    glVertex2f(47.0 + carPosition, 14.0);
+    glVertex2f(55.0 + carPosition, 14.0);
+    glVertex2f(55.0 + carPosition, 12.0);
+    glVertex2f(45.0 + carPosition, 12.0);
+    glVertex2f(45.0 + carPosition, 13.0);
+    glEnd();
+}
+
+void drawCarBody2() {
+    glColor3ub(255, 215, 0);
+    glBegin(GL_QUADS);
+    glVertex2f(45.0 + carPosition, 13.0);
+    glVertex2f(55.0 + carPosition, 14.0);
+    glVertex2f(55.0 + carPosition, 11.7);
+    glVertex2f(45.0 + carPosition, 11.7);
+    glEnd();
+}
+
+void drawCarGlass() {
+    glColor3ub(121, 205, 205);
+    glBegin(GL_POLYGON);
+    glVertex2f(48.6 + carPosition, 15.7);
+    glVertex2f(52.8 + carPosition, 15.7);
+    glVertex2f(54.4 + carPosition, 13.8);
+    glVertex2f(47.4 + carPosition, 13.8);
+    glEnd();
+}
+
+// Microbus drawing functions
+void drawMicroBus() {
+    glColor3ub(205, 85, 85);
+    glBegin(GL_POLYGON);
+    glVertex2f(63.8 + microbusPosition, 11.5);
+    glVertex2f(64.2 + microbusPosition, 15.0);
+    glVertex2f(66.0 + microbusPosition, 18.0);
+    glVertex2f(75.0 + microbusPosition, 18.0);
+    glVertex2f(76.0 + microbusPosition, 15.0);
+    glVertex2f(76.0 + microbusPosition, 11.5);
+    glEnd();
+}
+
+void drawMicroBusGlass() {
+    glColor3ub(121, 205, 205);
+    glBegin(GL_POLYGON);
+    glVertex2f(65.0 + microbusPosition, 15.0);
+    glVertex2f(66.0 + microbusPosition, 17.5);
+    glVertex2f(74.8 + microbusPosition, 17.5);
+    glVertex2f(75.8 + microbusPosition, 15.0);
+    glEnd();
+}
+
+//cloud
+// Global variables to keep track of cloud positions and speed
+GLfloat cloudPos1 = 0.0;
+GLfloat cloudPos2 = 0.0;
+GLfloat cloudPos3 = 0.0;
+GLfloat cloudSpeed = 0.01;
+bool cloudsMoving = true; // Variable to track if clouds are moving
+
+// Function to draw a cloud
+void drawcloud(GLfloat x, GLfloat y, GLfloat radius) {
+    int triangleAmount = 100; // Number of triangles used to approximate the circle
+    GLfloat twicePi = 2.0f * PI;
+    glColor3ub(245, 245, 245); // Set color for the cloud (White)
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x, y); // Center of circle
+        for (int i = 0; i <= triangleAmount; i++) {
+            glVertex2f(x + (radius * cos(i * twicePi / triangleAmount)),
+                       y + (radius * sin(i * twicePi / triangleAmount)));
+        }
+    glEnd();
+}
+
+// Function to draw cloud bases
+void drawcloudBase(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
+    glColor3ub(245, 245, 245);
+    glBegin(GL_QUADS);
+        glVertex2f(x1, y1);
+        glVertex2f(x1, y2);
+        glVertex2f(x2, y2);
+        glVertex2f(x2, y1);
+    glEnd();
+}
+
+void drawclouds() {
+    drawcloud(2.0 + cloudPos1, 44.3, 1.8);
+    drawcloud(4.5 + cloudPos1, 46.0, 1.8);
+    drawcloud(7.0 + cloudPos1, 45.0, 1.8);
+    drawcloud(9.0 + cloudPos1, 44.0, 1.6);
+    drawcloudBase(2.0 + cloudPos1, 42.45, 9.0 + cloudPos1, 45.0);
+
+    drawcloud(31.0 + cloudPos2, 44.88, 1.6);
+    drawcloud(34.0 + cloudPos2, 46.0, 2.0);
+    drawcloud(37.0 + cloudPos2, 45.2, 1.7);
+    drawcloud(39.4 + cloudPos2, 44.5, 1.2);
+    drawcloudBase(30.4 + cloudPos2, 43.3, 39.5 + cloudPos2, 45.0);
+
+    drawcloud(65.2 + cloudPos3, 45.0, 1.5);
+    drawcloud(68.0 + cloudPos3, 46.0, 1.8);
+    drawcloud(70.9 + cloudPos3, 45.0, 1.6);
+    drawcloudBase(65.0 + cloudPos3, 43.45, 71.0 + cloudPos3, 45.0);
+}
+
+
+// Display function to call flag and shapes drawing functions
+void display() {
+
+   glClear(GL_COLOR_BUFFER_BIT);  // Clear the color buffer
+
+   //sun
+   drawSun(3,46,2);
+
+   drawRoad();          // Call Road
+   drawSideLine1();     // Call side line 1
+   drawSideLine2();     // Call side line 2
+   drawMiddleLine1();   // Call middle line 1
+   drawMiddleLine2();   // Call middle line 2
+   drawMiddleLine3();   // Call middle line 3
+   drawMiddleLine4();   // Call middle line 4
+   drawMiddleLine5();   // Call middle line 5
+   drawMiddleLine6();   // Call middle line 6
+   drawMiddleLine7();   // Call middle line 7
+   drawMiddleLine8();   // Call middle line 8
+   drawGreenTree();
+   drawGreenTree2();
+   drawPillerBase();
+
+
+//Building
+   drawBuilding1();
+   drawBuilding11();
+   drawBuilding2();
+   drawBuilding22();
+   drawBuilding3();
+   drawBuilding4();
+   drawBuilding44();
+   drawBuilding5();
+   drawBuilding55();
+   drawBuilding6();
+   drawBuilding66();
+   drawBuilding7();
+   drawBuilding77();
+   drawBuilding8();
+   drawBuilding88();
+   drawBuilding9();
+   drawBuilding99();
+   drawBuilding10();
+   //metro
+   drawMetroBoady();
+
+   drawBridge();
+   drawBridge2();
+   drawPiller1();
+   drawPiller2();
+   drawPiller3();
+   drawPiller4();
+   drawPiller5();
+   drawPiller6();
+   drawPiller7();
+   drawPiller8();
+
+   //mini piller
+   drawMiniPiller1();
+   drawMiniPiller2();
+   drawMiniPiller3();
+   drawMiniPiller4();
+   drawMiniPiller5();
+   drawMiniPiller6();
+   drawMiniPiller7();
+   drawMiniPiller8();
+   drawMiniPiller9();
+   drawMiniPiller10();
+
+    // Car
+    drawCarBody1();
+    drawCarBody2();
+    drawCarGlass();
+    drawRotatingCircle(46.6 + carPosition, 11.8, 1.0, carTireAngle, 46, 46, 46);
+    drawRotatingCircle(46.6 + carPosition, 11.8, 0.6, carTireAngle, 150, 150, 150);
+    drawRotatingCircle(53.4 + carPosition, 11.8, 1.0, carTireAngle, 46, 46, 46);
+    drawRotatingCircle(53.4 + carPosition, 11.8, 0.6, carTireAngle, 150, 150, 150);
+
+    // Microbus
+    drawMicroBus();
+    drawMicroBusGlass();
+    drawRotatingCircle(65.8 + microbusPosition, 11.8, 1.2, microbusTireAngle, 46, 46, 46);
+    drawRotatingCircle(65.8 + microbusPosition, 11.8, 0.75, microbusTireAngle, 150, 150, 150);
+    drawRotatingCircle(74.0 + microbusPosition, 11.8, 1.2, microbusTireAngle, 46, 46, 46);
+    drawRotatingCircle(74.0 + microbusPosition, 11.8, 0.75, microbusTireAngle, 150, 150, 150);
+
+   //Cloud
+drawclouds();
+
+    // Track
+    drawTrackBoady4();
+    drawTrackBoady();
+    drawTrackBoady3();
+    drawTrackBoady2();
+
+    // Draw tires with rotation
+    drawTrackTire(8.8 + trackPosition, 8.0, 2.2, 46);  // Tire 1
+    drawTrackTire(13.7 + trackPosition, 8.0, 2.2, 46);  // Tire 2
+    drawTrackTire(28.5 + trackPosition, 8.0, 2.2, 46);  // Tire 3
+    drawTrackTire(8.8 + trackPosition, 8.0, 1.2, 150);  // Tire 11
+    drawTrackTire(13.7 + trackPosition, 8.0, 1.2, 150);  // Tire 22
+    drawTrackTire(28.5 + trackPosition, 8.0, 1.2, 150);  // Tire 33
+
+
+   glFlush();
+}
+
+
+// Keyboard event handler for controls
+void handleKeypress(unsigned char key, int x, int y) {
+    switch (key) {
+        case 's':  // Start
+            isMoving = true;
+            break;
+        case 'p':  // Stop
+            isMoving = false;
+            break;
+        case '+':  // Increase speed
+            trackSpeed += 0.05f;
+            carSpeed += 0.05f;
+            microbusSpeed += 0.05f;
+            metroSpeed += 0.05f;
+            break;
+        case '-':  // Decrease speed
+            trackSpeed = (trackSpeed > 0.05f) ? trackSpeed - 0.05f : 0.0f;
+            carSpeed = (carSpeed > 0.05f) ? carSpeed - 0.05f : 0.0f;
+            microbusSpeed = (microbusSpeed > 0.05f) ? microbusSpeed - 0.05f : 0.0f;
+            metroSpeed = (metroSpeed > 0.05f) ? metroSpeed - 0.05f : 0.0f;
+            break;
+    }
+}
+/*
+// Mouse button event handler
+void handleMouse(int button, int state, int x, int y) {
+    if (state == GLUT_DOWN) {
+        switch (button) {
+            case GLUT_LEFT_BUTTON:
+                isMoving = true;  // Start animation
+                break;
+            case GLUT_RIGHT_BUTTON:
+                isMoving = false;  // Stop animation
+                break;
+        }
+    }
+}
+*/
+
+void updateClouds(int value) {
+    if (cloudsMoving) {
+        // Update cloud positions
+        cloudPos1 += cloudSpeed;
+        cloudPos2 += cloudSpeed * 1.5;
+        cloudPos3 += cloudSpeed * 2.0;
+
+        // Reset positions if they move off-screen
+        if (cloudPos1 > 80.0) cloudPos1 = -80.0;
+        if (cloudPos2 > 80.0) cloudPos2 = -80.0;
+        if (cloudPos3 > 80.0) cloudPos3 = -80.0;
+    }
+
+    glutPostRedisplay(); // Redisplay the scene
+    glutTimerFunc(16, updateClouds, 0); // Call update again after 16 ms (approx 60 FPS)
+}
+
+// Mouse button event handler
+void handleMouse(int button, int state, int x, int y) {
+    if (state == GLUT_DOWN) {
+        switch (button) {
+            case GLUT_LEFT_BUTTON:
+                cloudsMoving = true;  // Start animation
+                break;
+            case GLUT_RIGHT_BUTTON:
+                cloudsMoving = false;  // Stop animation
+                break;
+        }
+    }
+}
+
+// Mouse scroll event handler
+void handleMouseWheel(int button, int dir, int x, int y) {
+    if (dir > 0) {
+        cloudSpeed += 0.01;  // Increase speed
+    } else {
+        cloudSpeed -= 0.01;  // Decrease speed
+        if (cloudSpeed < 0.01) cloudSpeed = 0.01;  // Minimum speed
+    }
+}
+
+void registerMouseWheel() {
+    // Register the mouse wheel event handler
+    glutMouseFunc([](int button, int state, int x, int y) {
+        if (button == 3 || button == 4) {
+            handleMouseWheel(button, (button == 3) ? 1 : -1, x, y);
+        } else {
+            handleMouse(button, state, x, y);
+        }
+    });
+}
+void sound()
+{
+
+    PlaySound("bus_horn", NULL,SND_ASYNC|SND_FILENAME|SND_LOOP);
+
+}
+
+int main(int argc, char** argv) {
+   glutInit(&argc, argv);
+   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);  // Single buffering and RGB color mode
+   glutInitWindowSize(1280, 720);  // Set window size
+   glutCreateWindow("Image 1");
+   glClearColor(0.53, 0.81, 0.92, 1.0);  // Set background color to sky blue
+   glMatrixMode(GL_PROJECTION);
+   gluOrtho2D(0.0, 80.0, 0.0, 50.0);  // Define coordinate system for 2D
+   glutDisplayFunc(display);  // Register display function
+   glutTimerFunc(16, updateMetro, 0); // Start the update function for animation
+   glutTimerFunc(16, customUpdateFunction, 0);
+   glutKeyboardFunc(handleKeypress); // Register keyboard event handler
+//   glutMouseFunc(handleMouse);  // Register mouse event handler
+    glutTimerFunc(16, updateClouds, 0); // Start the update function for animation
+    registerMouseWheel();  // Register mouse event handler including mouse wheel
+    sound();
+
+   glutMainLoop();            // Enter the main loop
+   return 0;
+}
